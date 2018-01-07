@@ -1,0 +1,51 @@
+FROM rhel7.3:7.3-released
+
+MAINTAINER OpenShift Development <dev@lists.openshift.redhat.com>
+
+EXPOSE 9200
+EXPOSE 9300
+USER 0
+
+ENV HOME=/opt/app-root/src \
+  JAVA_VER=1.8.0 \
+  ES_VER=2.4.4 \
+  ES_CLOUD_K8S_VER=2.4.4 \
+  OSE_ES_VER=2.4.4.9 \
+  ES_CONF=/usr/share/java/elasticsearch/config \
+  INSTANCE_RAM=512G \
+  NODE_QUORUM=1 \
+  RECOVER_AFTER_NODES=1 \
+  RECOVER_EXPECTED_NODES=1 \
+  RECOVER_AFTER_TIME=5m \
+  PLUGIN_LOGLEVEL=INFO \
+  ES_JAVA_OPTS="-Dmapper.allow_dots_in_name=true"
+
+ARG ES_CLOUD_K8S_VER=2.4.4
+ARG OSE_ES_VER=2.4.4.9
+ARG ES_CLOUD_K8S_URL
+ARG OSE_ES_URL
+
+LABEL io.k8s.description="Elasticsearch container for flexible storage" \
+  io.k8s.display-name="Elasticsearch ${ES_VER}" \
+  io.openshift.expose-services="9200:https, 9300:https" \
+  io.openshift.tags="logging,elk,elasticsearch" \
+  com.redhat.component=logging-elasticsearch-docker \
+  name="openshift3/logging-elasticsearch" \
+  version="v3.6.144" \
+  release="1" \
+  architecture=x86_64
+
+ADD sgconfig/ ${HOME}/sgconfig/
+ADD index_templates/ /usr/share/elasticsearch/index_templates/
+ADD index_patterns/ /usr/share/elasticsearch/index_patterns/
+ADD kibana_ui_objects/ /usr/share/elasticsearch/kibana_ui_objects/
+
+ADD probe/ /usr/share/elasticsearch/probe/
+ADD run.sh install.sh.prod ${HOME}/
+COPY utils/** /usr/local/bin/
+RUN ln -s /usr/local/bin/logging ${HOME}/logging
+RUN ${HOME}/install.sh.prod
+
+WORKDIR ${HOME}
+USER 1000
+CMD ["sh", "/opt/app-root/src/run.sh"]

@@ -1,0 +1,101 @@
+# Overview
+This project has been created to provide an offline demo of the Red Hat [CloudForms](http://red.ht/2izwErj) (CFME) appliance.
+This Dockerfile instantiates CFME 4.2 as a container, and then imports the database dump from the environment in the MBU lab.
+
+# Prerequisites
+- Git
+- Docker Engine
+- VPN access
+
+# Usage
+
+## Build image
+
+```
+docker build -t demo/cfme:4.2 .
+```
+
+## Run container
+
+```
+docker run --privileged -di -p 80:80 -p 443:443 --name cfme41 demo/cfme:4.2
+```
+
+## Web Console
+
+After running the container, wait 10-15 mins for the database to populate.
+
+Then, browse `https://localhost/` or `https://localhost/self_service` (self-service portal).
+
+### Credentials
+
+| User | Password | Description |
+| ------ | ------------ | ----------- |
+| admin | smartvm | Administrative account |
+| clouduser | Redhat1! | Customer user |
+| cloudops | Redhat1! | Ops engineer |
+
+## Open sh (Bourne shell)
+
+```
+docker exec -it cfme42 sh
+```
+
+## View logs
+
+```
+docker exec -it cfme42 journalctl -f
+```
+
+## Stop container
+
+```
+docker stop cfme42
+```
+
+## Remove container
+
+```
+docker rm cfme42
+```
+
+## Remove image
+
+```
+docker rmi demo/cfme:4.2
+```
+
+## Clean workspace
+
+```
+# Remove container
+docker rm -f cfme42
+
+# Remove image
+docker rmi -f demo/cfme:4.2
+
+# Remove volume
+docker volume rm $(docker volume ls -qf dangling=true)
+```
+
+# Networking
+
+| Port | Description |
+| ----- | -------------- |
+| 80 | SSL Redirect |
+| 443 | Default port |
+
+# Resources
+
+- [Install Docker Engine](http://dockr.ly/2g6Gym2)
+- [CloudForms Workshops](http://bit.ly/2gqNZRa)
+- [Change the CloudForms EVM admin password](http://red.ht/2gidHtC)
+- [Official product documentation](http://red.ht/2gQ5v4n)
+- [CloudForms as a Container](http://red.ht/2ghjfl0)
+
+# Authors
+
+- Michael Surbey <msurbey@redhat.com>, Master
+- Jerome Marc <erics@redhat.com>, Developer
+- Nick Carboni <ncarboni@redhat.com>, Developer
+- Eric Schabell <erics@redhat.com>, Reporter

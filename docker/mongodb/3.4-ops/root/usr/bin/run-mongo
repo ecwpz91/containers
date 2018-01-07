@@ -1,0 +1,41 @@
+#!/bin/bash
+
+set -o errexit
+set -o nounset
+set -o pipefail
+
+source ${APP_SCR_PATH}/common.sh
+
+function usage() {
+  echo "You must specify the following environment variables:"
+  echo "  MONGODB_ADMIN_PASSWORD"
+  echo "MongoDB settings:"
+  echo "  MONGODB_ENCRYPTED_CREDENTIALS (default: true)"
+  exit 1
+}
+
+if [[ ${MONGODB_ENCRYPTED_CREDENTIALS} ]]; then
+  mongo_encrypt_admin
+fi
+
+# If user provides own config file use it and do not generate new one
+if [[ ! -s $MONGODB_PROPERTIES_FILE ]]; then
+  # Generate config file for MongoDB
+  envsubst < ${APP_SCR_PATH}/conf-mms.properties.template > $MONGODB_PROPERTIES_FILE
+fi
+
+# Protect plain text passwords
+chmod 600 $MONGODB_PROPERTIES_FILE
+
+if ! [[ -v MONGODB_ADMIN_PASSWORD ]]; then
+  usage
+fi
+
+# Make sure env variables don't propagate to mongod process
+unset MONGODB_ADMIN_PASSWORD
+
+# Run MongoDB Ops Manager server
+mongodb-mms start
+
+# Infinite loop to keep container running
+while true; do sleep 1000; done

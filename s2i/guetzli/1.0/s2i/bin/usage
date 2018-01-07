@@ -1,0 +1,21 @@
+#!/bin/bash -e
+
+DISTRO=`cat /etc/*-release | grep ^ID= | grep -Po '".*?"' | tr -d '"'`
+NAMESPACE=centos
+[[ $DISTRO =~ rhel* ]] && NAMESPACE=rhscl
+
+cat <<EOF
+This is a S2I guetzli-1.0 ${DISTRO} base image:
+To use it, install S2I: https://github.com/openshift/source-to-image
+
+Sample invocation:
+
+s2i build git@github.com:ecwpz91/s2i-guetzli-container.git --context-dir=1.0/test/test-app/ ${NAMESPACE}/guetzli-10-${DISTRO}7 guetzli-sample-app
+
+Make sure to set the file permissions (local)
+chmod a+rw example.jpg
+
+You can then run the resulting image via:
+docker run --rm -v ${filepath}:/opt/app-root/src/${filename}:Z \
+       ${IMAGE_NAME} /bin/bash -c "guetzli --verbose ${filename} ${filename}"
+EOF

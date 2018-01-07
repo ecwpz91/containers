@@ -1,0 +1,18 @@
+# Set current user in nss_wrapper
+USER_ID=1001
+GROUP_ID=1001
+
+if [ x"" != x"0" -a x"" != x"1001" ]; then
+  NSS_WRAPPER_PASSWD=/opt/app-root/etc/passwd
+  NSS_WRAPPER_GROUP=/etc/group
+
+  cat /etc/passwd | sed -e 's/^default:/builder:/' >
+
+  echo "default:x:::Default Application User:/home/msurbey:/sbin/nologin" >>
+
+  export NSS_WRAPPER_PASSWD
+  export NSS_WRAPPER_GROUP
+
+  LD_PRELOAD=libnss_wrapper.so
+  export LD_PRELOAD
+fi

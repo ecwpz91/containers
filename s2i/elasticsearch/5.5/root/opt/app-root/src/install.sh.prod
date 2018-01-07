@@ -1,0 +1,48 @@
+#!/bin/bash
+
+set -ex
+
+yum-config-manager --enable rhel-7-server-ose-3.6-rpms \
+                   --enable rhel-7-server-extras-rpms
+yum install -y \
+    java-1.8.0-openjdk \
+    elasticsearch \
+    openshift-elasticsearch-plugin \
+    elasticsearch-cloud-kubernetes \
+    zip \
+    PyYAML
+
+# reconcile upstream and internal RPM locations
+ln -s /usr/share/java/elasticsearch /usr/share/elasticsearch
+
+es_home=/usr/share/elasticsearch
+plugin="-Xmx64m -Xms16m -Delasticsearch $ES_JAVA_OPTS -classpath $es_home/lib/* org.elasticsearch.plugins.PluginManager"
+mkdir -p ${HOME} /elasticsearch
+chmod -R og+w /usr/share/java/elasticsearch ${HOME} /elasticsearch /etc/elasticsearch
+
+pushd /usr/share/java/openshift-elasticsearch-plugin
+  zip -r /tmp/openshift-elasticsearch-plugin.zip .
+popd
+
+pushd /usr/share/java/elasticsearch-cloud-kubernetes
+  zip -r /tmp/elasticsearch-cloud-kubernetes.zip .
+popd
+
+#java $plugin -i io.fabric8.elasticsearch/openshift-elasticsearch-plugin/0.14
+/usr/share/java/elasticsearch/bin/plugin install file:///tmp/openshift-elasticsearch-plugin.zip
+#java $plugin -i io.fabric8/elasticsearch-cloud-kubernetes/1.3.0
+/usr/share/java/elasticsearch/bin/plugin install file:///tmp/elasticsearch-cloud-kubernetes.zip
+
+# don't clutter up the image with stuff we don't need at runtime
+rm -f /tmp/*.zip /etc/elasticsearch/*.rpmnew
+yum remove -y openshift-elasticsearch-plugin elasticsearch-cloud-kubernetes
+yum clean all
+
+chmod +x /usr/share/java/elasticsearch/plugins/openshift-elasticsearch/sgadmin.sh
+
+PASSWD=$(cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 20 | head -n 1)
+cat > ${HOME}/sgconfig/sg_internal_users.yml << CONF
+---
+  $(cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 8 | head -n 1):
+    hash: $PASSWD
+CONF

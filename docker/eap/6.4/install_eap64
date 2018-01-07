@@ -1,0 +1,23 @@
+#!/bin/bash
+
+set -e
+
+SCRIPTS_DIR=/tmp
+DISTRIBUTION_TAR="jboss-eap-6.4.9-full-build.tar.gz"
+EAP_VERSION="6.4"
+
+mkdir $JBOSS_HOME && \
+tar -zxf $SCRIPTS_DIR/$DISTRIBUTION_TAR -C $JBOSS_HOME --strip-components 1
+
+chmod 0755 $JBOSS_HOME
+chown -R jboss:jboss $JBOSS_HOME
+
+# Enhance standalone.sh to make remote JAVA debugging possible by specifying
+# DEBUG=true environment variable
+sed -i 's|DEBUG_MODE=false|DEBUG_MODE="${DEBUG:-false}"|' $JBOSS_HOME/bin/standalone.sh
+sed -i 's|DEBUG_PORT="8787"|DEBUG_PORT="${DEBUG_PORT:-8787}"|' $JBOSS_HOME/bin/standalone.sh
+#CLOUD-437
+sed -i "s|-XX:MaxPermSize=256m||" $JBOSS_HOME/bin/standalone.conf
+
+# Cleanup the scripts directory
+rm -rf $SCRIPTS_DIR/*

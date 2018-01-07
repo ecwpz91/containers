@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<xs:schema xmlns="http://www.metamatrix.com/ACCOUNT_Input" xmlns:xs="http://www.w3.org/2001/XMLSchema" targetNamespace="http://www.metamatrix.com/ACCOUNT_Input">
+  <xs:include schemaLocation="/Users/cvanball/Projects/jbds910/Financials/Schemas/DataDictionary.xsd"/>
+  <xs:element name="ACCOUNT_Input" type="ACCOUNT_Input_Type"/>
+  <xs:complexType name="ACCOUNT_Input_Type">
+    <xs:sequence>
+      <xs:element maxOccurs="1" minOccurs="0" name="ACCOUNTID" nillable="false" type="AccountID"/>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="ACCOUNTHOLDINGS_Input" type="ACCOUNTHOLDINGS_Input_Type"/>
+  <xs:complexType name="ACCOUNTHOLDINGS_Input_Type">
+    <xs:sequence>
+      <xs:element maxOccurs="1" minOccurs="0" name="TRANSACTIONID" nillable="false" type="TransactionID"/>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="CUSTOMER_Input" type="CUSTOMER_Input_Type"/>
+  <xs:complexType name="CUSTOMER_Input_Type">
+    <xs:sequence>
+      <xs:element maxOccurs="1" minOccurs="0" name="CUSTOMERID" nillable="false" type="CustomerID"/>
+    </xs:sequence>
+  </xs:complexType>
+</xs:schema>

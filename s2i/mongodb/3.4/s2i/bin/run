@@ -1,0 +1,44 @@
+#!/bin/bash -e
+#
+# S2I run script for the '3.4' image.
+# The run script executes the server that runs your application.
+#
+# For more information see the documentation:
+#	https://github.com/openshift/source-to-image/blob/master/docs/builder_image.md
+
+set -o errexit
+set -o nounset
+set -o pipefail
+
+# [TODO] Capture exit code and print error if failed, see
+# http://mywiki.wooledge.org/ProcessSubstitution#Pitfalls
+if [[ -n "${MONGODB_REPLICA_NAME:-}" ]]; then
+	setup_keyfile
+
+	replicaset &
+
+	(
+	unset_env_vars
+
+	log_info "Starting mongo daemon (replica set)"
+	$MONGOD --config "$MONGODB_CONFIG_PATH" --keyFile $MONGODB_KEYFILE_PATH --replSet "${MONGODB_REPLICA_NAME:-}"
+	) &
+	wait
+else
+	standalone "$MONGODB_CONFIG_PATH" &
+
+	(
+	log_info "Starting mongo daemon (standalone)"
+	$MONGOD --config "$MONGODB_CONFIG_PATH"
+	) &
+	wait
+
+	unset_env_vars
+
+	log_info "Stopping mongo daemon"
+	$MONGOD --config "$MONGODB_CONFIG_PATH" --shutdown
+	wait_for_mongo_down
+
+	log_info "Starting mongo daemon (enable access control)"
+	$MONGOD --config "$MONGODB_CONFIG_PATH" --auth
+fi

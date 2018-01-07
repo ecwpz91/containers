@@ -1,0 +1,15 @@
+#!/bin/bash -e
+
+cat <<EOF
+****************************
+ELASTIC-55-CENTOS7 S2I IMAGE
+****************************
+
+To use it, install the S2I tool via https://github.com/openshift/source-to-image
+
+# Build new base image
+s2i build git://<source> centos/elastic-55-centos7 --context-dir=5.5/test/test-app
+
+# Run a new container
+docker run -d centos/elastic-55-centos7 /bin/bash -c 'while true; do sleep 1000; done'
+EOF

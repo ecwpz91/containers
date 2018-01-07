@@ -1,0 +1,16 @@
+#!/bin/bash -e
+
+DISTRO=`cat /etc/*-release | grep ^ID= | grep -Po '".*?"' | tr -d '"'`
+NAMESPACE=centos
+[[ $DISTRO =~ rhel* ]] && NAMESPACE=rhscl
+
+cat <<EOF
+This is a S2I guetzli-1.0 ${DISTRO} base image:
+To use it, install S2I: https://github.com/openshift/source-to-image
+Sample invocation:
+
+s2i build git@gitlab.consulting.redhat.com/msurbey/s2i-cfme-container.git -context-dir=4.1/test/test-app/ ${NAMESPACE}/cfme-41-${DISTRO}7 cfme-sample-app
+
+You can then run the resulting image via:
+docker run --privileged -di -p 80:80 -p 443:443 cfme-sample-app
+EOF

@@ -1,0 +1,5 @@
+[centos]
+name=centos
+baseurl=http://mirror.cs.vt.edu/pub/CentOS/7/os/$basearch/
+gpgcheck=1
+gpgkey=http://mirror.cs.vt.edu/pub/CentOS/7/os/$basearch/RPM-GPG-KEY-CentOS-7
