@@ -18,7 +18,7 @@ Docker images from source code, but it lacks some really interesting features
 to be productive from a developer’s perspective. This script helps developers
 with their casual/daily worksflows while using `s2i create` as the internal tool.
 
-For instance, `s2ic <imageName> <destination>` will perform the following:
+For instance, `s2i-create <imageName> <destination>` will perform the following:
 - Setup common build helpers for [sclorg][3] containers
 - Add a `.gitignore` to the newly created project space
 - Remove the default Makefile created by `s2i create`
