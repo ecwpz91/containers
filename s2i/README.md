@@ -38,23 +38,21 @@ via the `git pull` command.
 #### Linux
 
 ```sh
-git clone https://msurbey@gitlab.consulting.redhat.com/msurbey/s2ic.git
-cd s2ic/bin/
-chmod +x s2ic
-echo 'PATH=$PWD/s2ic:$PATH' >> $HOME/.bash_profile
+chmod +x s2i-create.sh
+echo 'PATH=$PWD:$PATH' >> $HOME/.bash_profile
 source $HOME/.bash_profile
 ```
 
 ### Usage
 
 ```sh
-s2ic cloudforms-00-centos7 $(PWD)/cf/
+s2i-create mycontainer-00-centos7 $(PWD)/cf/
 ```
 
 OR
 
 ```sh
-s2ic cloudforms-00-centos7 cf/
+s2i-create mycontainer-00-centos7 cf/
 ```
 
 [1]: https://github.com/sclorg
