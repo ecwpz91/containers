@@ -1,89 +1,87 @@
 MongoDB Docker image
 ====================
 
-This repository contains MongoDB Dockerfiles for general use and with OpenShift.
+This repository contains Dockerfiles for MongoDB images for general usage and OpenShift.
 
 Environment variables
 ---------------------------------
 
-The image recognizes the following default values that you can set during by
-passing `-e VAR=VALUE` to the Docker `run` command.
+The image recognizes the following environment variables that you can set during
+initialization by passing `-e VAR=VALUE` to the Docker run command.
 
-|    Name                   |    Description                   |    Value |
-| :------------------------ | ---------------------------------| ---------|
-|  `MONGODB_ADMIN_USER`     | Username for 'userAdmin' account | admin    |
-|  `MONGODB_ADMIN_PASSWORD` | Password for 'userAdmin' account | -        |
-|  `MONGODB_USER`           | Username for 'readWrite' account | -        |
-|  `MONGODB_PASSWORD`       | Password for 'readWrite' account | -        |
-|  `MONGODB_DATABASE`       | Database for 'readWrite' account | -        |
-|  `MONGODB_QUIET`          | Suppress system log output       | true     |
-|    Replica Set <td colspan="2"/>
-|  `MONGODB_KEYFILE_VALUE`  | Specific replica set secret      | -        |
-|  `MONGODB_REPLICA_NAME`   | Specific replica set name        | -        |
-|  `MONGODB_SERVICE_NAME`   | Specific replica set service     | mongodb  |
+|    Variable name          |    Description                              |
+| :------------------------ | -----------------------------------------   |
+|  `MONGODB_ADMIN_PASSWORD` | Password for the admin user                 |
+
+Optionally you can provide settings for user with 'readWrite' role.
+
+|    Variable name          |    Description                              |
+| :------------------------ | -----------------------------------------   |
+|  `MONGODB_USER`           | User name for MONGODB account to be created |
+|  `MONGODB_PASSWORD`       | Password for the user account               |
+|  `MONGODB_DATABASE`       | Database name                               |
+
+
+The following environment variables influence the MongoDB configuration file. They are all optional.
+
+|    Variable name      |    Description                                                            |    Default
+| :-------------------- | ------------------------------------------------------------------------- | ----------------
+|  `MONGODB_QUIET`      | Runs MongoDB in a quiet mode that attempts to limit the amount of output. |  true
+
+
+You can also set the following mount points by passing the `-v /host:/container` flag to Docker.
+
+|  Volume mount point         | Description            |
+| :-------------------------- | ---------------------- |
+|  `/var/lib/mongodb/data`   | MongoDB data directory |
+
+**Notice: When mouting a directory from the host into the container, ensure that the mounted
+directory has the appropriate permissions and that the owner and group of the directory
+matches the user UID or name which is running inside the container.**
 
 Usage
 ---------------------------------
 
-For this, we will assume that you are using the `centos/mongodb-34-tar-centos7`
-image.
-
-### Mount volume
-
-The following command initializes a standalone MongoDB instance with two users
-and stores the data on the host file system.
+For this, we will assume that you are using the `centos/mongodb-34-tar-centos7` image.
+If you want to set only the mandatory environment variables and store the database
+in the `/home/user/database` directory on the host filesystem, execute the following command:
 
 ```
-export DOCKER_ARGS="-e MONGODB_USER=<username> \
-                    -e MONGODB_PASSWORD=<password> \
-                    -e MONGODB_DATABASE=<database> \
-                    -e MONGODB_ADMIN_PASSWORD=<admin_password> \
-                    -v /home/user/database:/var/lib/mongodb/data:Z"
-
-docker run -d ${DOCKER_ARGS} --name mdb centos/mongodb-34-tar-centos7
+$ docker run -d -e MONGODB_USER=<user> -e MONGODB_PASSWORD=<password> -e MONGODB_DATABASE=<database> -e MONGODB_ADMIN_PASSWORD=<admin_password> -v /home/user/database:/var/lib/mongodb/data centos/mongodb-34-tar-centos7
 ```
 
-If you are re-attaching the volume to another container, the creation of the
-database user and admin user will be skipped and only the standalone MongoDB
-instance will be started.
+If you are initializing the database and it's the first time you are using the
+specified shared volume, the database will be created with two users: `admin` and `MONGODB_USER`. After that the MongoDB daemon
+will be started. If you are re-attaching the volume to another container, the
+creation of the database user and admin user will be skipped and only the
+MongoDB daemon will be started.
 
-**Notice: When mounting data locally, ensure that the mount point has the right
-permissions by checking that the owner/group matches the user private group
-(UPG) inside the container.**
+Custom configuration file
+---------------------------------
 
-### Custom configuration
+It is allowed to use custom configuration file for mongod server. Providing a custom configuration file supercedes the individual configuration environment variable values.
 
-The following command initializes a standalone MongoDB instance with a
-configuration file already stored on the host file system.
+To use custom configuration file in container it has to be mounted into `/etc/mongod.conf`. For example to use configuration file stored in `/home/user` directory use this option for `docker run` command: `-v /home/user/mongod.conf:/etc/mongod.conf:Z`.
 
-```
-export DOCKER_ARGS="-e MONGODB_ADMIN_PASSWORD=<admin_password> \
-                    -v /home/user/mongod.conf:/etc/mongod.conf:Z"
+**Notice: Custom config file does not affect name of replica set. It has to be set in `MONGODB_REPLICA_NAME` environment variable.**
 
-docker run -d ${DOCKER_ARGS} centos/mongodb-34-tar-centos7
-```
+MongoDB admin user
+---------------------------------
 
-**Notice: Custom config file does not affect name of replica set. It has to be
-set in `MONGODB_REPLICA_NAME` environment variable.**
+The admin user name is set to `admin` and you have to to specify the password by
+setting the `MONGODB_ADMIN_PASSWORD` environment variable. This process is done
+upon database initialization.
 
-### Update credentials
 
-The following commands initializes a standalone MongoDB instance and then resets
-the 'userAdmin' account password.
+Changing passwords
+------------------
 
-```
-export CONTAINER=mongodb-34
+Since passwords are part of the image configuration, the only supported method
+to change passwords for the database user (`MONGODB_USER`) and admin user is by
+changing the environment variables `MONGODB_PASSWORD` and
+`MONGODB_ADMIN_PASSWORD`, respectively.
 
-export DOCKER_ARGS="-e MONGODB_ADMIN_PASSWORD=<admin_password>"
-
-docker run -d ${DOCKER_ARGS} --name ${CONTAINER} centos/mongodb-34-tar-centos7
-
-docker exec ${CONTAINER} bash -c "-e MONGODB_ADMIN_PASSWORD=<new_admin_password>"
-
-docker restart ${CONTAINER}
-```
-
-**Notice: Changing database passwords directly in MongoDB will cause a mismatch
-between the values stored in the variables and the actual passwords. Whenever a
-database container starts it will reset the passwords to the values stored in
-the environment variables.**
+Changing database passwords directly in MongoDB will cause a mismatch between
+the values stored in the variables and the actual passwords. Whenever a database
+container starts it will reset the passwords to the values stored in the
+environment variables.

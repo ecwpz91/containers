@@ -1,12 +1,7 @@
 #!/bin/bash
 
-set -o errexit
-set -o nounset
-set -o pipefail
-
 # insert_and_wait_for_replication insert data in host and wait all replset members
 # applied recent oplog entry
-# See https://jira.mongodb.org/browse/SERVER-27289 (bug fix)
 function insert_and_wait_for_replication() {
   local host
   host=$1
@@ -16,30 +11,29 @@ function insert_and_wait_for_replication() {
   # Storing document into replset and wait replication to finish
   local script
   script="db.getSiblingDB('test_db').data.insert(${data});
-    for (var i = 0; i < 60; i++) {
-      var status=rs.status();
-      var optime=status.members[0].optime;
-      var ok=true;
-      for(var j=1; j < status.members.length; j++) {
-        if(tojson(optime) != tojson(status.members[j].optime)) {
-          ok=false;
-        }
-      };
-      if(ok == true) {
-        print('INFO: All members of replicaset are synchronized');
-        quit(0);
+  for (var i = 0; i < 60; i++) {
+    var status=rs.status();
+    var optime=status.members[0].optime;
+    var ok=true;
+    for(var j=1; j < status.members.length; j++) {
+      if(tojson(optime) != tojson(status.members[j].optime)) {
+        ok=false;
       }
-      sleep(1000);
+    };
+    if(ok == true) {
+      print('INFO: All members of replicaset are synchronized');
+      quit(0);
     }
-    print('ERROR: Members of replicaset are not synchronized');
-    printjson(rs.status());
-    quit(1);"
+    sleep(1000);
+  }
+  print('ERROR: Members of replicaset are not synchronized');
+  printjson(rs.status());
+  quit(1);"
 
-  mongo "${host}" --eval "${script}"
+  mongo admin --host "${host}" -u admin -p "${MONGODB_ADMIN_PASSWORD}" --eval "${script}"
 }
 
 # wait_replicaset_members waits till replset has specified number of members
-# See https://jira.mongodb.org/browse/SERVER-27289 (bug fix)
 function wait_replicaset_members() {
   local host
   host=$1
@@ -59,5 +53,5 @@ function wait_replicaset_members() {
   printjson(rs.status());
   quit(1);"
 
-  mongo "${host}" --eval "${script}"
+  mongo admin --host "${host}" -u admin -p "${MONGODB_ADMIN_PASSWORD}" --eval "${script}"
 }

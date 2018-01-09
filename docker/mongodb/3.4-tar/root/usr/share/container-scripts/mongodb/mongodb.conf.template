@@ -8,17 +8,21 @@ systemLog:
   destination: file
   logAppend: true
   quiet: ${MONGODB_QUIET} # Runs MongoDB in a quiet mode that attempts to limit the amount of output. Default: true
-  path: ${MONGODB_LOG_PATH}/mongod.log
+  path: ${APP_LOG_PATH}/mongod.log
 
 # storage Options - How and Where to store data
 storage:
-  dbPath: ${MONGODB_DATADIR} # Directory for datafiles (defaults to /data/db/)
+  dbPath: ${APP_DAT_PATH} # Directory for datafiles (defaults to /data/db/)
   journal:
     enabled: true
 
 # How the process runs
 processManagement:
-  pidFilePath: ${MONGODB_PID_PATH}/mongodb.pid
+  pidFilePath: ${APP_PID_PATH}/mongodb.pid
+
+# net Options - Network interfaces settings
+net:
+  port: ${CONTAINER_PORT} # Specify port number (27017 by default)
 
 # replication Options - Configures replication
 replication:
