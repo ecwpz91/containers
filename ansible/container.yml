@@ -53,7 +53,6 @@ defaults:
   JBOSS_HOME: /home/jboss
   JBOSS_USER: jboss
 
-
 services:
   # Add your containers here, specifying the base image you want to build from.
   # To use this example, uncomment it and delete the curly braces after services key.
