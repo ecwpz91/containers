@@ -1,0 +1,16 @@
+- name: Ensure /etc/yum.repos.d exists
+  file:
+    path: /etc/yum.repos.d
+    state: directory
+  remote_user: root
+- copy:
+    src: centos.repo
+    dest: /etc/yum.repos.d/centos.repo
+  remote_user: root
+- name: Create a user and group used to launch processes We use the ID 185 for the
+    group as well as for the user. This ID is registered static ID for the JBoss EAP
+    product on RHEL which makes it safe to use.
+  shell: groupadd -r jboss -g 185
+  remote_user: root
+- shell: useradd -u 185 -r -g jboss -m -d $HOME -s /sbin/nologin -c "JBoss user" jboss
+  remote_user: root

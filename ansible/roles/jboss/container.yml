@@ -1,0 +1,6 @@
+settings:
+  conductor_base: centos:7
+services:
+  jboss:
+    roles:
+    - jboss

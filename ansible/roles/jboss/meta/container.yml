@@ -1,0 +1,20 @@
+# Dockerizing RHEL7: Dockerfile for building JBoss images.
+# Based on rhel7.3-beta/rhel7.3, creates initial group & user account.
+from: centos:7
+maintainer: Michael Surbey <msurbey@redhat.com>
+environment:
+# Environment variables
+  JBOSS_IMAGE_NAME: jboss-base-7/base
+  JBOSS_IMAGE_VERSION: '1.2'
+  JBOSS_IMAGE_RELEASE: '7'
+  HOME: /home/jboss
+labels:
+# Labels
+  Name: "{{ lookup('env', 'JBOSS_IMAGE_NAME') }}"
+  Version: "{{ lookup('env', 'JBOSS_IMAGE_VERSION') }}"
+  Release: "{{ lookup('env', 'JBOSS_IMAGE_RELEASE') }}"
+  Architecture: x86_64
+  BZComponent: jboss-base-7-base-docker
+user: jboss
+# Set the working directory to jboss' user home directory
+working_dir: /home/jboss
