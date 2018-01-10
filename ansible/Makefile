@@ -4,20 +4,20 @@ project_name = $(shell basename $$PWD)
 	run run_prod stop
 
 clean:
-	@./scripts/clean.sh all
+	@./hack/clean.sh all
 
 clean_containers:
-	@./scripts/clean.sh containers
+	@./hack/clean.sh containers
 
 build:
-	@./scripts/clean.sh containers
+	@./hack/clean.sh containers
 	ansible-container build
 
 build_from_scratch: clean
 	ansible-container build
 
 build_debug:
-	@./scripts/clean.sh containers
+	@./hack/clean.sh containers
 	ansible-container --debug build
 
 run:
