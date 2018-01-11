@@ -1,32 +1,20 @@
 #!/usr/bin/env bash
 
-docker-remove() {
- local name=${1:-}
- local rslt
-
- if [[ -z "${name}" ]]; then
-  rslt=( $(docker ps -aq) )
- else
-  rslt=( "$(docker ps -aqf name=${name:-})" )
- fi
-
- if ! ${#rslt[@]}; then
-  for c in "${rslt[@]}"; do
-   if ! docker rm --force ${c} 2>/dev/null; then
-    printf "fail: ${FUNCNAME[0]}: %s\n" "docker rm -it ${c} bash" >&2; return 1
-   fi
-  done
- fi
-}
+array=( jboss )
 
 if [[ $1 == 'all' || $1 == 'containers' ]]; then
- echo "Removing all project containers..."
- containers=$(docker ps -a --format "{{.Names}}" | grep -e ansible_jboss | wc -l | tr -d '[[:space:]]')
- if [ ${containers} -gt 0 ]; then
-  docker rm --force $(docker ps -a --format "{{.Names}}" | grep -e ansible_jboss)
- else
-  echo "No ansible_jboss containers found"
- fi
+ printf "%s\n" "Removing all project containers..."
+
+ for i in $(docker ps -a --format '{{.Names}}'); do
+  for c in "${array[@]}"; do
+   if [[ "${c:-}" == "${i:-}" ]]; then
+    docker rm --force "${i:-}"
+    found=true
+   fi
+  done
+
+  [[ ! ${found:-} ]] &&  printf "No %s containers found\n" "${c}"; found=false
+ done
 fi
 
 if [[ $1 == 'all' || $1 == 'images' ]]; then
