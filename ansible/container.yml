@@ -48,7 +48,6 @@ settings:
   #  description:
   #  display_name:
 
-
 defaults:
   JBOSS_HOME: /home/jboss
   JBOSS_USER: jboss
