@@ -1,12 +1,12 @@
 #!/usr/bin/env bash
 
-array=( jboss )
+containers=( jboss )
 
 if [[ $1 == 'all' || $1 == 'containers' ]]; then
  printf "%s\n" "Removing all project containers..."
 
  for i in $(docker ps -a --format '{{.Names}}'); do
-  for c in "${array[@]}"; do
+  for c in "${containers[@]}"; do
    if [[ "${c:-}" == "${i:-}" ]]; then
     docker rm --force "${i:-}"
     found=true
