@@ -1,0 +1,14 @@
+#!/bin/bash
+
+# useradd -m -s /bin/bash -G admin $USER_LOGIN
+# usermod -p $(printf $USER_PASS | openssl passwd -1 -stdin) $USER_LOGIN
+
+if ! whoami &> /dev/null; then
+  if [ -w /etc/passwd ]; then
+    echo "${USER_NAME:-default}:x:$(id -u):0:${USER_NAME:-default} user:${HOME}:/bin/bash" >> /etc/passwd
+  fi
+fi
+
+# sed -i -re 's/^'${USER_NAME:-default}':[^:]+:/'${USER_NAME:-default}'::/' /etc/passwd /etc/shadow
+
+exec "$@"
