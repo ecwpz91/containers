@@ -1,0 +1,7 @@
+#!/bin/bash
+
+docker pull ${GUACD_IMAGE_NAME:-}
+docker pull ${GUACAMOLE_IMAGE_NAME:-}
+docker pull ${MYSQL_IMAGE_NAME:-}
+docker run --name ${GUACD_CONTAINER_NAME:-} -d ${GUACD_IMAGE_NAME:-}
+docker run --name ${MYSQL_CONTAINER_NAME:-} -e MYSQL_ROOT_PASSWORD=${GUACAMOLE_PASSWORD:-} -d ${MYSQL_IMAGE_NAME:-}
