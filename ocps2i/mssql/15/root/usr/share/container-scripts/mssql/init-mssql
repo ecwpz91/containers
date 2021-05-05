@@ -1,0 +1,29 @@
+#!/bin/bash
+
+set -o errexit
+set -o nounset
+set -o pipefail
+
+# @public Create a standalone instance of mssql that is running as a single
+# server.
+#
+# @param  $1 mssql configuration file
+#
+# 05/2017 Marked function as readonly.
+function standalone() {
+    local conf=${1:-}
+    
+    if [[ -z "${conf}" ]]; then
+        log_fail "Couldn't read config file. Conf is not set, no such file or directory"
+        exit 1
+    fi
+    
+    wait_for_mssql_up &>/dev/null
+    
+    log_info "Start the script to create the DB"
+    $SQLCMD -S localhost -U "${SA_USER:-}" -P ${SA_PASSWORD:-} -d master -i ${CONTAINER_SCRIPTS_PATH:-}/setup.sql
+    
+    log_info "Import the data from products csv file"
+    $BCPCMD DemoData.dbo.Products in "${CONTAINER_SCRIPTS_PATH:-}/Products.csv" -c -t',' -S localhost -U "${SA_USER:-}" -P ${SA_PASSWORD:-}
+}
+readonly -f standalone

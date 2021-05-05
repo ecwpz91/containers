@@ -1,0 +1,67 @@
+#----------------------------------------------------
+# Commands
+#----------------------------------------------------
+
+# PYTHON is the full path of the python command, explicitly set to guard against
+# incautious use of shebang or interpreter/program invokation.
+readonly PYTHON=/usr/bin/python
+
+# SQLCMD is the full path of the interactive shell interface to
+# Microsoft SQL Server, explicitly set to guard against incautious use of shebang or
+# interpreter/program invokation.
+readonly SQLCMD=/opt/mssql-tools/bin/sqlcmd
+
+# SQLSERVR is the full path of the primary daemon process for the Microsoft SQL Server system,
+# explicitly set to guard against incautious use of shebang or
+# interpreter/program invokation.
+readonly SQLSERVR=/opt/mssql/bin/sqlservr
+
+# BCPCMD is the bulk copy program utility (bcp) bulk copies data between an instance of 
+# Microsoft SQL Server and a data file in a user-specified format, explicitly set to guard 
+# against incautious use of shebang or interpreter/program invokation.
+readonly BCPCMD=/opt/mssql-tools/bin/bcp
+
+#----------------------------------------------------
+# Directory PATHs
+#----------------------------------------------------
+
+# MSSQL_DATADIR is the location of the database files live for sqlservr runtime.
+export MSSQL_DATADIR=$HOME/data
+
+#----------------------------------------------------
+# File PATHs
+#----------------------------------------------------
+
+# MSSQL_CONFIG_PATH is the location of the configuration file for sqlservr runtime
+# configuration options.
+readonly MSSQL_CONFIG_PATH=$HOME/mssql.conf
+
+#----------------------------------------------------
+# Constants
+#----------------------------------------------------
+
+# MEMBER_HOST is the FQDN of this host that will be added to a replica set, e.g.
+# "replica-2.mssql.myproject.svc.cluster.local"
+readonly MEMBER_HOST=$(hostname -f)
+
+# [NOTE] For a StatefulSet with N replicas, when Pods are being deployed, they
+# are created sequentially, in order from {0..N-1} with using a predictable
+# naming convention, e.g. "${statefulset-name}-${zero-based-index}"
+
+# MEMBER_ID is computed by removing the prefix matching "*-", e.g.
+#  "mssql-0" -> "0"
+#  "mssql-1" -> "1"
+#  "mssql-2" -> "2"
+readonly MEMBER_ID=${HOSTNAME##*-}
+
+#----------------------------------------------------
+# Parameters
+#----------------------------------------------------
+
+# MAX_ATTEMPTS is the maximum number of conntection retries when attempting
+# to synchronize processes with the Microsoft SQL Server 2019 daemon
+export MAX_ATTEMPTS=${MAX_ATTEMPTS:-60}
+
+# SA_USER is a configuration parameter that represents the
+# administrative account's username (default sa).
+export SA_USER=${SA_USER:-sa}

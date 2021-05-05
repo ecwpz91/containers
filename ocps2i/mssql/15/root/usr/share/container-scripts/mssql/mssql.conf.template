@@ -1,0 +1,10 @@
+# mssql.conf
+
+# For documentation of all options, see:
+# https://docs.microsoft.com/en-us/sql/linux/sql-server-linux-configure-mssql-conf?view=sql-server-ver15
+
+[sqlagent]
+enabled = false
+
+[memory]
+memorylimitmb = 2000

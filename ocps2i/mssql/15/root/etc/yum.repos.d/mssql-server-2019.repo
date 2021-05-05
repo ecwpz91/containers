@@ -1,0 +1,6 @@
+[packages-microsoft-com-mssql-server-2019]
+name=packages-microsoft-com-mssql-server-2019
+baseurl=https://packages.microsoft.com/rhel/8/mssql-server-2019/
+enabled=1
+gpgcheck=1
+gpgkey=https://packages.microsoft.com/keys/microsoft.asc
