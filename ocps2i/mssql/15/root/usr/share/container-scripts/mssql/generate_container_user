@@ -1,0 +1,10 @@
+# Set current user in nss_wrapper
+export USER_ID=$(id -u)
+export GROUP_ID=$(id -g)
+
+if [ x"$USER_ID" != x"0" -a x"$USER_ID" != x"1001" ]; then
+    envsubst < ${CONTAINER_SCRIPTS_PATH:-}/passwd.template > /etc/passwd
+    export LD_PRELOAD=/usr/lib64/libnss_wrapper.so.0.2.5
+    export NSS_WRAPPER_PASSWD=/etc/passwd
+    export NSS_WRAPPER_GROUP=/etc/group
+fi
