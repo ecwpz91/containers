@@ -38,7 +38,7 @@ COPY root /
 ENTRYPOINT ["container-entrypoint"]
 
 RUN yum -y localinstall /tmp/*.rpm \
-&& ACCEPT_EULA=Y yum -y install --setopt=tsflags=nodocs mssql-server mssql-tools unixODBC-devel nss_wrapper hostname \
+&& ACCEPT_EULA=Y yum -y install --setopt=tsflags=nodocs mssql-server mssql-tools unixODBC-devel hostname nss_wrapper gettext \
 && yum clean all \
 # Remove systemd boot targets - improves container init performance
 && (cd /lib/systemd/system/sysinit.target.wants \
@@ -53,10 +53,10 @@ RUN yum -y localinstall /tmp/*.rpm \
           /tmp/*.rpm
 
 # Create files and directory locations
-RUN mkdir -p $HOME/data \
-&& touch /tmp/passwd \
+RUN touch $HOME/mssql.conf \
+&& mkdir -p $HOME/data \
 # Set owner 'mssql:0' and 'g+rw(x)' permission - to avoid problems running container with arbitrary UID
-&& /usr/libexec/fix-permissions $CONTAINER_SCRIPTS_PATH/mssql.conf.template /tmp/passwd $HOME
+&& /usr/libexec/fix-permissions /etc/passwd $CONTAINER_SCRIPTS_PATH/mssql.conf.template $CONTAINER_SCRIPTS_PATH/passwd.template $HOME
 
 CMD ["run-mysql"]
 
