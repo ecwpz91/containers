@@ -7,4 +7,4 @@
 enabled = false
 
 [memory]
-memorylimitmb = 2000
+memorylimitmb = ${MAX_MEMORY}
