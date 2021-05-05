@@ -3,3 +3,5 @@ v2_key
 vmdb_production_latest.dump
 Dockerfile.version
 help.1
+.workspace/
+tmp/
