@@ -62,6 +62,10 @@ readonly MEMBER_ID=${HOSTNAME##*-}
 # to synchronize processes with the Microsoft SQL Server 2019 daemon
 export MAX_ATTEMPTS=${MAX_ATTEMPTS:-60}
 
+# MAX_MEMORY is the setting controls the amount physical memory (in MB) available to SQL 
+# Server. The default is 80% of the physical memory.
+export MAX_MEMORY=${MAX_MEMORY:-2048}
+
 # SA_USER is a configuration parameter that represents the
 # administrative account's username (default sa).
 export SA_USER=${SA_USER:-sa}
