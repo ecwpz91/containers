@@ -79,7 +79,7 @@
                                 "containerPort": 1433
                             }],
                             "volumeMounts": [{
-                                "mountPath": "/var/opt/mssql/data",
+                                "mountPath": "/var/opt/mssql",
                                 "name": "mssql-data"
                             }],
                             "env": [{
