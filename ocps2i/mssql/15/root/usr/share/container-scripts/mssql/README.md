@@ -58,7 +58,7 @@ docker run -d ${DOCKER_ARGS} ecwpz91/mssql-2019-ubi8
 ### Update credentials
 
 The following commands initializes a standalone Microsoft SQL Server 2019 instance and then resets
-the 'default SQL Authentication' account password. The default user name in these cases is 'sa', 
+the default SQL Authentication account password. The default user name in these cases is 'sa', 
 and the default password is 'blank'.
 
 ```
