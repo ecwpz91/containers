@@ -5,3 +5,5 @@ Dockerfile.version
 help.1
 .workspace/
 tmp/
+.image-id
+.image-id.raw
