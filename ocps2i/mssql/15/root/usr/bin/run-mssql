@@ -1,0 +1,38 @@
+#!/bin/bash
+
+set -o errexit
+set -o nounset
+set -o pipefail
+
+# shellcheck source=/dev/null
+source ${CONTAINER_SCRIPTS_PATH:-}/generate_container_user
+
+# shellcheck source=/dev/null
+source ${CONTAINER_SCRIPTS_PATH:-}/common.sh
+
+# shellcheck source=/dev/null
+source ${CONTAINER_SCRIPTS_PATH:-}/init-mssql
+
+unset share_files share_file
+trap cleanup SIGINT SIGTERM
+
+log_info "Checking env variables"
+check_env_vars
+
+log_info "Checking data directory"
+check_data_dir
+
+log_info "Setting up config file"
+envsubst < "${CONTAINER_SCRIPTS_PATH:-}/mssql.conf.template" > "$MSSQL_CONFIG_PATH"
+
+# [TODO] Capture exit code and print error if failed, see
+# http://mywiki.wooledge.org/ProcessSubstitution#Pitfalls
+standalone "$MSSQL_CONFIG_PATH" &
+
+(
+    log_info "Start SQL Server (standalone)"
+    $SQLSERVR
+) &
+wait
+
+unset_env_vars
