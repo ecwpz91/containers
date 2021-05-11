@@ -57,7 +57,7 @@ RUN touch $HOME/mssql.conf \
 # Set owner 'mssql:0' and 'g+rw(x)' permission - to avoid problems running container with arbitrary UID
 && /usr/libexec/fix-permissions /etc/passwd $CONTAINER_SCRIPTS_PATH/mssql.conf.template $CONTAINER_SCRIPTS_PATH/passwd.template $HOME
 
-CMD ["run-mysql"]
+CMD ["run-mssql"]
 
 VOLUME ["/var/opt/mssql/data"]
 
