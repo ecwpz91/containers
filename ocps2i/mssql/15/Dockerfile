@@ -28,8 +28,7 @@ LABEL name="ecwpz91/mssql-2019-ubi8" \
       io.openshift.tags="database,mssql" \
       run="docker run -d --name mssql -e ACCEPT_EULA=Y -e SA_PASSWORD=yourStrong@Password -p 1433:1433 ecwpz91/mssql-2019-ubi8" \
       com.redhat.license_terms="https://www.redhat.com/en/about/red-hat-end-user-license-agreements#rhel" \
-      url="https://www.microsoft.com/en-us/sql-server/" \
-      maintainer="ecwpz91 <ecwpz91@users.noreply.github.com>"
+      url="https://www.microsoft.com/en-us/sql-server/"
 
 EXPOSE 1433
 
