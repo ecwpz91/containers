@@ -139,5 +139,5 @@ make sense.
 ### Other
 Sometimes it is also useful to use a graphical diff tool such as [Meld][2] for a final verification, or working side-by-side on the parts that actually differ and that cannot the copied over automatically.
 
-[1]: https://github.com/sclorg/tomcat-container/issues
+[1]: https://github.com/jboss-openshift/application-templates/issues
 [2]: http://meldmerge.org/
