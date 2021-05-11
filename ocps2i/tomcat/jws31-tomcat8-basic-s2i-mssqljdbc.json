@@ -296,8 +296,7 @@
         {
             "description": "Git branch/tag reference",
             "displayName": "Git Reference",
-            "name": "SOURCE_REPOSITORY_REF",
-            "value": "1.2"
+            "name": "SOURCE_REPOSITORY_REF"
         },
         {
             "description": "Path within Git project to build; empty for root project directory.",
