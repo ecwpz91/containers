@@ -10,7 +10,7 @@
         "annotations": {
             "description": "An example JBoss Web Server application. For more information about using this template, see https://github.com/jboss-openshift/application-templates.",
             "iconClass": "icon-rh-tomcat",
-            "openshift.io/display-name": "JBoss Web Server 3.1 Apache Tomcat 8 (no https)",
+            "openshift.io/display-name": "JBoss Web Server 3.1 Apache Tomcat 8 + MSSQL JDBC (no https)",
             "openshift.io/provider-display-name": "Red Hat, Inc.",
             "samples.operator.openshift.io/version": "4.7.7",
             "tags": "tomcat,tomcat8,java,jboss",
