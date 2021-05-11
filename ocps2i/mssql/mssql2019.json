@@ -73,7 +73,7 @@
                     },
                     "spec": {
                         "containers": [{
-                            "name": "db",
+                            "name": "mssql",
                             "image": "quay.io/ecwpz91/mssql-2019-ubi8:latest",
                             "ports": [{
                                 "containerPort": 1433
