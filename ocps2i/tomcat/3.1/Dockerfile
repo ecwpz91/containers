@@ -1,10 +1,10 @@
 FROM registry.redhat.io/jboss-webserver-3/webserver31-tomcat8-openshift:latest
 
-ENV JBOSS_IMAGE_NAME="jboss-webserver-3/webserver31-tomcat8-openshift" \
+ENV JBOSS_IMAGE_NAME="jboss-webserver-3/webserver31-tomcat8-mssqljdbc-openshift" \
     JBOSS_IMAGE_VERSION="1.4" \
     STI_BUILDER="jee"
 
-LABEL com.redhat.component="jboss-webserver-3-webserver31-tomcat8-openshift-container"  \
+LABEL com.redhat.component="jboss-webserver-3-webserver31-tomcat8-mssqljdbc-openshift-container"  \
       description="Red Hat JBoss Web Server 3.1 - Tomcat 8 OpenShift container image"  \
       io.cekit.version="3.8.0"  \
       io.k8s.description="Platform for building and running web applications on JBoss Web Server 3.1 - Tomcat v8"  \
@@ -13,7 +13,7 @@ LABEL com.redhat.component="jboss-webserver-3-webserver31-tomcat8-openshift-cont
       io.openshift.s2i.scripts-url="image:///usr/local/s2i"  \
       io.openshift.tags="builder,java,tomcat8"  \
       maintainer="Michael Surbey <msurbey@redhat.com>" \
-      name="ecwpz91/webserver31-tomcat8-openshift" \
+      name="ecwpz91/webserver31-tomcat8-mssqljdbc-openshift" \
       summary="Red Hat JBoss Web Server 3.1 - Tomcat 8 OpenShift container image"  \
       version="1.4" 
 
