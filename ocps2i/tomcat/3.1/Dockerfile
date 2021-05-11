@@ -17,6 +17,8 @@ LABEL com.redhat.component="jboss-webserver-3-webserver31-tomcat8-mssqljdbc-open
       summary="Red Hat JBoss Web Server 3.1 - Tomcat 8 OpenShift container image"  \
       version="1.4" 
 
+EXPOSE 8443
+
 USER root
 
 COPY root /
