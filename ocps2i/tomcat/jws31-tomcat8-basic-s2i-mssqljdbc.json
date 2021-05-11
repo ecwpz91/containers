@@ -157,7 +157,7 @@
                         "forcePull": true,
                         "from": {
                             "kind": "ImageStreamTag",
-                            "name": "quay.io/ecwpz91/webserver31-tomcat8-mssqljdbc-openshift:latest",
+                            "name": "webserver31-tomcat8-mssqljdbc-openshift:latest",
                             "namespace": "${IMAGE_STREAM_NAMESPACE}"
                         }
                     },
