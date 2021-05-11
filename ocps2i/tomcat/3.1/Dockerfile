@@ -23,7 +23,7 @@ USER root
 
 COPY root /
 
-RUN /usr/libexec/fix-permissions $JWS_HOME/lib/mssql-jdbc-8.2.2.jre8.jar $JWS_HOME/conf/server.xml $JWS_HOME/conf/context.xml
+RUN /usr/libexec/fix-permissions $JWS_HOME/lib/mssql-jdbc-9.2.1.jre8.jar $JWS_HOME/conf/server.xml $JWS_HOME/conf/context.xml
 
 USER 185
 
