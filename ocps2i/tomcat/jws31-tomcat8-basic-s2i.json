@@ -3,7 +3,7 @@
     "kind": "Template",
     "labels": {
         "jws31": "1.4",
-        "template": "jws31-tomcat8-basic-s2i"
+        "template": "jws31-tomcat8-basic-s2i-mssqljdbc"
     },
     "message": "A new JWS application for Apache Tomcat 8 has been created in your project. The username/password for administering your JWS is ${JWS_ADMIN_USERNAME}/${JWS_ADMIN_PASSWORD}.",
     "metadata": {
@@ -61,7 +61,7 @@
                 "time": "2021-04-22T22:28:01Z"
             }
         ],
-        "name": "jws31-tomcat8-basic-s2i",
+        "name": "jws31-tomcat8-basic-s2i-mssqljdbc",
         "namespace": "openshift",
         "resourceVersion": "56177312",
         "uid": "c40848c7-4869-4753-83a5-34270cf2cc4b"
@@ -160,7 +160,7 @@
                         "forcePull": true,
                         "from": {
                             "kind": "ImageStreamTag",
-                            "name": "jboss-webserver31-tomcat8-openshift:1.4",
+                            "name": "quay.io/ecwpz91/webserver31-tomcat8-openshift:latest",
                             "namespace": "${IMAGE_STREAM_NAMESPACE}"
                         }
                     },
