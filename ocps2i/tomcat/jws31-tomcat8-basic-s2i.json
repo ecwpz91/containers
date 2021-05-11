@@ -61,10 +61,7 @@
                 "time": "2021-04-22T22:28:01Z"
             }
         ],
-        "name": "jws31-tomcat8-basic-s2i-mssqljdbc",
-        "namespace": "openshift",
-        "resourceVersion": "56177312",
-        "uid": "c40848c7-4869-4753-83a5-34270cf2cc4b"
+        "name": "jws31-tomcat8-basic-s2i-mssqljdbc"
     },
     "objects": [
         {
@@ -294,8 +291,7 @@
             "description": "Git source URI for application",
             "displayName": "Git Repository URL",
             "name": "SOURCE_REPOSITORY_URL",
-            "required": true,
-            "value": "https://github.com/jboss-openshift/openshift-quickstarts.git"
+            "required": true
         },
         {
             "description": "Git branch/tag reference",
@@ -306,8 +302,7 @@
         {
             "description": "Path within Git project to build; empty for root project directory.",
             "displayName": "Context Directory",
-            "name": "CONTEXT_DIR",
-            "value": "tomcat-websocket-chat"
+            "name": "CONTEXT_DIR"
         },
         {
             "description": "JWS Admin User",
