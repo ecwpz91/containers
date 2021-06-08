@@ -25,6 +25,7 @@ LABEL name="ecwpz91/mssql-2019-ubi8" \
       io.k8s.description="$DESCRIPTION" \
       io.k8s.display-name="Microsoft SQL Server 2019" \
       io.openshift.expose-services="1433:tcp" \
+      io.openshift.non-scalable="true" \
       io.openshift.tags="database,mssql" \
       run="docker run -d --name mssql -e ACCEPT_EULA=Y -e SA_PASSWORD=yourStrong@Password -p 1433:1433 ecwpz91/mssql-2019-ubi8" \
       com.redhat.license_terms="https://www.redhat.com/en/about/red-hat-end-user-license-agreements#rhel" \
@@ -52,10 +53,11 @@ RUN yum -y localinstall /tmp/*.rpm \
           /tmp/*.rpm
 
 # Create files and directory locations
-RUN touch $HOME/mssql.conf \
+RUN : > $HOME/mssql.conf \
 && mkdir -p $HOME/data \
-# Set owner 'mssql:0' and 'g+rw(x)' permission - to avoid problems running container with arbitrary UID
-&& /usr/libexec/fix-permissions /etc/passwd $CONTAINER_SCRIPTS_PATH/mssql.conf.template $CONTAINER_SCRIPTS_PATH/passwd.template $HOME
+# Set owner 'mssql:0' and 'g+rw(X)' permission - to avoid problems running container with arbitrary UID
+&& /usr/libexec/fix-permissions /etc/passwd $CONTAINER_SCRIPTS_PATH/mssql.conf.template \
+$CONTAINER_SCRIPTS_PATH/passwd.template $HOME
 
 CMD ["run-mssql"]
 
