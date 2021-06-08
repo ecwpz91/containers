@@ -15,4 +15,5 @@ dbus:x:81:81:System message bus:/:/sbin/nologin
 systemd-coredump:x:999:997:systemd Core Dumper:/:/sbin/nologin
 systemd-resolve:x:193:193:systemd Resolver:/:/sbin/nologin
 saslauth:x:998:76:Saslauthd user:/run/saslauthd:/sbin/nologin
-mssql:x:${USER_ID}:${GROUP_ID}:Microsoft SQL Server:${HOME}:/bin/bash
+mssql:x:997:996::/var/opt/mssql:/bin/bash
+default:x:${USER_ID}:${GROUP_ID}:Default Application User:${HOME}:/sbin/nologin
