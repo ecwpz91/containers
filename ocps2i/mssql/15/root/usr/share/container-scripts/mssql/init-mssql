@@ -21,9 +21,9 @@ function standalone() {
     wait_for_mssql_up &>/dev/null
     
     log_info "Start the script to create the DB"
-    $SQLCMD -S localhost -U "${SA_USER:-}" -P ${SA_PASSWORD:-} -d master -i ${CONTAINER_SCRIPTS_PATH:-}/setup.sql
+    $SQLCMD -S localhost -U "${SA_USER:-}" -P "${SA_PASSWORD:-}" -d master -i "${CONTAINER_SCRIPTS_PATH:-}/setup.sql"
     
     log_info "Import the data from products csv file"
-    $BCPCMD DemoData.dbo.Products in "${CONTAINER_SCRIPTS_PATH:-}/Products.csv" -c -t',' -S localhost -U "${SA_USER:-}" -P ${SA_PASSWORD:-}
+    $BCPCMD Products in "${CONTAINER_SCRIPTS_PATH:-}/Products.csv" -S localhost -d DemoData -U "${SA_USER:-}" -P "${SA_PASSWORD:-}" -q -c -t ,
 }
 readonly -f standalone
