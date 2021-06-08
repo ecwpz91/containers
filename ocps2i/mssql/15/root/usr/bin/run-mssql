@@ -4,13 +4,10 @@ set -o errexit
 set -o nounset
 set -o pipefail
 
-# shellcheck source=/dev/null
 source ${CONTAINER_SCRIPTS_PATH:-}/generate_container_user
 
-# shellcheck source=/dev/null
 source ${CONTAINER_SCRIPTS_PATH:-}/common.sh
 
-# shellcheck source=/dev/null
 source ${CONTAINER_SCRIPTS_PATH:-}/init-mssql
 
 unset share_files share_file
