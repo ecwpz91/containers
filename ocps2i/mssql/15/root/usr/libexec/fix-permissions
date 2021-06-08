@@ -1,6 +1,14 @@
 #!/bin/sh
-# Fix permissions on the given directory to allow group read/write of 
+
+# Allow this script to fail without failing a build
+set +e
+
+# Fix permissions on the given directory or file to allow group read/write of
 # regular files and execute of directories.
-find $@ -exec chown mssql:0 {} \;
-find $@ -exec chmod g+rw {} \;
-find $@ -type d -exec chmod g+x {} +
+
+find -L $@ -exec chown mssql:0 {} +
+find -L $@ -exec chmod g+rw {} +
+find -L $@ -type d -exec chmod g+x {} +
+
+# Always end successfully
+exit 0
