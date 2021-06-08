@@ -35,7 +35,9 @@ readonly -f check_env_vars
 # 05/2017 Marked function as readonly.
 function check_data_dir() {
   if [ ! -w "${MSSQL_DATADIR:-}" ]; then
-    log_fail "Couldn't write into ${MSSQL_DATADIR:-}. User $(id -u) and Group $(id -G) don't have permissions, $(stat -c '%A owned by %u:%g, SELinux = %C' ${MSSQL_DATADIR:-})"
+    log_fail "Couldn't write into ${MSSQL_DATADIR:-}"
+    log_fail "Current user id = $(id -u), and user groups: $(id -G) don't have permissions"
+    log_fail "Directory permissions: $(stat -c '%A owned by %u:%g, SELinux = %C' ${MSSQL_DATADIR:-})"
     exit 1
   fi
 }
