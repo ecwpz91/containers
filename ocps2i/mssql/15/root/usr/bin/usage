@@ -1,3 +1,0 @@
-#!/bin/bash
-
-cat /usr/share/container-scripts/mssql/README.md
