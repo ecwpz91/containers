@@ -3,8 +3,14 @@ export USER_ID=$(id -u)
 export GROUP_ID=$(id -g)
 
 if [ x"$USER_ID" != x"0" -a x"$USER_ID" != x"1001" ]; then
+    NSS_WRAPPER_PASSWD=/etc/passwd
+    NSS_WRAPPER_GROUP=/etc/group
+
     envsubst < ${CONTAINER_SCRIPTS_PATH:-}/passwd.template > /etc/passwd
-    export LD_PRELOAD=/usr/lib64/libnss_wrapper.so.0.2.5
-    export NSS_WRAPPER_PASSWD=/etc/passwd
-    export NSS_WRAPPER_GROUP=/etc/group
+
+    export NSS_WRAPPER_PASSWD
+    export NSS_WRAPPER_GROUP
+    
+    LD_PRELOAD=/usr/lib64/libnss_wrapper.so
+    export LD_PRELOAD
 fi
