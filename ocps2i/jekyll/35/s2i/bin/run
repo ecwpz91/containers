@@ -1,0 +1,23 @@
+#!/bin/bash -e
+#
+# S2I run script for the 'jekyll-ubi8' image.
+# The run script executes the server that runs your application.
+#
+# For more information see the documentation:
+#	https://github.com/openshift/source-to-image/blob/master/docs/builder_image.md
+#
+
+source /opt/app-root/etc/generate_container_user
+
+echo "---> Starting nginx web server..."
+
+source ${NGINX_CONTAINER_SCRIPTS_PATH}/common.sh
+
+process_extending_files ${NGINX_APP_ROOT}/src/nginx-start ${NGINX_CONTAINER_SCRIPTS_PATH}/nginx-start
+
+if [ ! -v NGINX_LOG_TO_VOLUME -a -v NGINX_LOG_PATH ]; then
+    /bin/ln -s /dev/stdout ${NGINX_LOG_PATH}/access.log
+    /bin/ln -s /dev/stderr ${NGINX_LOG_PATH}/error.log
+fi
+
+exec nginx -g "daemon off;"

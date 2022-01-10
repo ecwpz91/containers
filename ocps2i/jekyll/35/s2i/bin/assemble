@@ -1,0 +1,166 @@
+#!/bin/bash -e
+#
+# S2I assemble script for the 'jekyll-ubi8' image.
+# The 'assemble' script builds your application source so that it is ready to run.
+#
+# For more information refer to the documentation:
+#	https://github.com/openshift/source-to-image/blob/master/docs/builder_image.md
+#
+
+shopt -s dotglob
+
+function rake_assets_precompile() {
+    [[ "$DISABLE_ASSET_COMPILATION" == "true" ]] && return
+    [ ! -f Gemfile ] && return
+    [ ! -f Rakefile ] && return
+    ! grep " rake " Gemfile.lock >/dev/null && return
+    ! bundle exec 'rake -T' | grep "assets:precompile" >/dev/null && return
+    
+    echo "---> Starting asset compilation ..."
+    bundle exec "rake assets:precompile"
+}
+
+export RACK_ENV=${RACK_ENV:-"production"}
+
+echo "---> Installing application source"
+cp -Rf /tmp/src/* ./
+
+if [ -n "$RUBYGEM_MIRROR" ]; then
+    bundle config mirror.https://rubygems.org $RUBYGEM_MIRROR
+fi
+
+if [[ "$1" == "-h" ]]; then
+    # If the 'jekyll-ubi8' assemble script is executed with '-h' flag,
+    # print the usage.
+    exec /usr/libexec/s2i/usage
+fi
+
+# Restore build artifacts
+if [ -d /tmp/artifacts/ ]; then
+    
+    if [ -f /tmp/src/_cachedirs ]; then
+        echo "Restoring directories specified in _cachedirs"
+        for cachedir in $(cat /tmp/src/_cachedirs); do
+            if [ -d /tmp/artifacts/"${cachedir}" ]; then
+                echo "  Restoring $cachedir to $HOME/"
+                mv /tmp/artifacts/"${cachedir}" ${cachedir}
+            fi
+        done
+    fi
+    
+    echo "Restoring site to /opt/app-root/src/"
+    mv /tmp/artifacts/opt/app-root/src/* /opt/app-root/src/
+    
+    if [ -f /tmp/artifacts/tmp/gems.tgz ]; then
+        echo "Restoring gems"
+        tar xzf /tmp/artifacts/tmp/gems.tgz -C /
+    fi
+    
+    echo "Finished restoring artifacts"
+else
+    echo "No previous artifacts found"
+fi
+
+DESTINATION=$(pwd)
+cd /tmp/src
+
+# Change the npm registry mirror if provided
+if [ -n "$NPM_MIRROR" ]; then
+    npm config set registry $NPM_MIRROR
+fi
+
+if [ -f "Gemfile" ]; then
+    echo "---> Installing dependencies with Bundler..."
+    
+    if ! grep -Fq "json" Gemfile; then
+        # Add json to Gemfile
+        # Workaround for issue where json isn't installed
+        echo "gem 'json'" >> Gemfile
+    fi
+    
+    ADDTL_BUNDLE_ARGS="--retry 2"
+    if [ -f Gemfile.lock ]; then
+        ADDTL_BUNDLE_ARGS+=" --deployment"
+    fi
+    
+    if [[ "$RAILS_ENV" == "development" || "$RACK_ENV" == "development" ]]; then
+        BUNDLE_WITHOUT=${BUNDLE_WITHOUT:-"test"}
+        elif [[ "$RAILS_ENV" == "test" || "$RACK_ENV" == "test" ]]; then
+        BUNDLE_WITHOUT=${BUNDLE_WITHOUT:-"development"}
+    else
+        BUNDLE_WITHOUT=${BUNDLE_WITHOUT:-"development:test"}
+    fi
+    
+    if [ -n "$BUNDLE_WITHOUT" ]; then
+        ADDTL_BUNDLE_ARGS+=" --without $BUNDLE_WITHOUT"
+    fi
+    
+    echo "---> Running 'bundle install ${ADDTL_BUNDLE_ARGS}' ..."
+    bundle install --path ./vendor/bundle ${ADDTL_BUNDLE_ARGS}
+    
+    echo "---> Cleaning up unused ruby gems ..."
+    bundle clean -V
+    
+    # Backup .gem for later retrieval
+    # tar czf /tmp/gems.tgz /opt/app-root/src/.gem
+    
+    echo "---> Building site with Jekyll..."
+    bundle exec jekyll build --incremental --destination ${DESTINATION}
+else
+    echo "---> Building site with Jekyll..."
+    jekyll build --incremental --destination ${DESTINATION}
+fi
+
+# if ! bundle exec rackup -h &>/dev/null; then
+#   echo "WARNING: Rubygem Rack is not installed in the present image."
+#   echo "         Add rack to your Gemfile in order to start the web server."
+# fi
+
+# if [[ "$RAILS_ENV" == "production" || "$RACK_ENV" == "production" ]]; then
+#   rake_assets_precompile
+# fi
+
+# Fix source directory permissions
+fix-permissions ./
+
+if [ -f ./nginx.conf ]; then
+    echo "---> Copying nginx.conf configuration file..."
+    cp -v ./nginx.conf "${NGINX_CONF_PATH}"
+    rm -f ./nginx.conf
+fi
+
+if [ -d ./nginx-cfg ]; then
+    echo "---> Copying nginx configuration files..."
+    if [ "$(ls -A ./nginx-cfg/*.conf)" ]; then
+        cp -av ./nginx-cfg/*.conf "${NGINX_CONFIGURATION_PATH}"
+        rm -rf ./nginx-cfg
+    fi
+    chmod -Rf g+rw ${NGINX_CONFIGURATION_PATH}
+fi
+
+if [ -d ./nginx-default-cfg ]; then
+    echo "---> Copying nginx default server configuration files..."
+    if [ "$(ls -A ./nginx-default-cfg/*.conf)" ]; then
+        cp -av ./nginx-default-cfg/*.conf "${NGINX_DEFAULT_CONF_PATH}"
+        rm -rf ./nginx-default-cfg
+    fi
+    chmod -Rf g+rw ${NGINX_DEFAULT_CONF_PATH}
+fi
+
+if [ -d ./nginx-start ]; then
+    echo "---> Copying nginx start-hook scripts..."
+    if [ "$(ls -A ./nginx-start/* 2>/dev/null)" ]; then
+        cp -av ./nginx-start/* "${NGINX_CONTAINER_SCRIPTS_PATH}/nginx-start/"
+        rm -rf ./nginx-start
+    fi
+fi
+
+if [ -d ./nginx-perl ]; then
+    echo "---> Copying nginx perl module files..."
+    if [ "$(ls -A ./nginx-perl/*.pm)" ]; then
+        cp -av ./nginx-perl/*.pm "${NGINX_PERL_MODULE_PATH}"
+        rm -rf ./nginx-perl
+    fi
+    chmod -Rf g+rw ${NGINX_PERL_MODULE_PATH}
+fi
+
