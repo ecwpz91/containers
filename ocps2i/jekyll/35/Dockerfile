@@ -74,15 +74,6 @@ COPY ./root/ /
 # Install Jekyll and Bundler with RubyGems
 RUN bash -c "gem install --no-document jekyll bundler"
 
-# Create directories for nginx
-# RUN mkdir -p ${APP_ROOT}/etc/nginx && \
-#     mkdir -p ${APP_ROOT}/etc/nginx.include.d && \
-#     mkdir -p ${APP_ROOT}/var/run/nginx && \
-#     mkdir -p ${APP_ROOT}/var/log/nginx && \
-#     mkdir -p ${APP_ROOT}/var/lib/nginx/tmp && \
-#     chgrp -R 0 /var/opt/rh/rh-nginx18 && \
-#     chmod -R g+rwX /var/opt/rh/rh-nginx18
-
 # In order to drop the root user, we have to make some directories world
 # writable as OpenShift default security model is to run the container under
 # random UID.
