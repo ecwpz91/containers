@@ -21,16 +21,15 @@ resulting image with [Docker](http://docker.io) execute:
     $ s2i build git@github.com:ecwpz91/containers.git --context-dir=ocps2i/drupal/93/test/test-app  quay.io/ecwpz91/s2i-drupal-93 drupal-test-app
     $ docker run -p 8080:8080 drupal-test-app
     ```
-    
+
 **Accessing the application:**
 ```
 $ curl 127.0.0.1:8080
 ```
 
-
 Repository organization
 ------------------------
-* **`<php-version>`**
+* **`<drupal-version>`**
 
     * **Dockerfile**
 
@@ -63,7 +62,7 @@ Repository organization
     * **`test/`**
 
         This folder contains the [S2I](https://github.com/openshift/source-to-image)
-        test framework with a sample PHP app.
+        test framework with a sample Drupal app.
 
         * **`test-app/`**
 
@@ -170,7 +169,7 @@ Hot deploy
 In order to immediately pick up changes made in your application source code, you need to run your built image with the `OPCACHE_REVALIDATE_FREQ=0` environment variable passed to the [Docker](http://docker.io) `-e` run flag:
 
 ```
-$ docker run -e OPCACHE_REVALIDATE_FREQ=0 -p 8080:8080 php-app
+$ docker run -e OPCACHE_REVALIDATE_FREQ=0 -p 8080:8080 drupal-app
 ```
 
 To change your source code in running container, use Docker's [exec](http://docker.io) command:
