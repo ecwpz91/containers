@@ -1,0 +1,32 @@
+# hello.routing.yml
+hello.world:
+  path: 'helloworld'
+  defaults:
+    _title: 'Hello world'
+    _controller: '\Drupal\hello\Controller\HelloRouteController::index3'
+  requirements:
+    _access: 'TRUE'
+
+hello.world.ext:
+  path: 'hello/{name}'
+  defaults:
+    _title: 'Hello world'
+    _controller: '\Drupal\hello\Controller\HelloRouteController::index4'
+  requirements:
+    _permission: 'access content'
+
+
+hello.form:
+  path: 'admin/config/content/hello'
+  defaults:
+    _form: '\Drupal\hello\Form\HelloForm'
+  requirements:
+    _permission: 'access administration pages'
+
+hello.query_test_display_last:
+  path: '/display/last'
+  defaults:
+    _controller: '\Drupal\hello\Controller\QueryTest::get_last_articles'
+    _title: 'GetLastArticles'
+  requirements:
+    _permission: 'access content'
