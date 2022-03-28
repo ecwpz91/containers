@@ -2,30 +2,26 @@ Drupal Docker image
 ================
 
 This repository contains the source for building various versions of
-the PHP application as a reproducible Docker image using
+the Drupal application as a reproducible Docker image using
 [source-to-image](https://github.com/openshift/source-to-image).
+
 Users can choose between RHEL and CentOS based builder images.
+
 The resulting image can be run using [Docker](http://docker.io).
 
 
 Usage
 ---------------------
-To build a simple [php-test-app](https://github.com/sclorg/s2i-php-container/tree/master/7.0/test/test-app) application
+To build a simple [drupal-test-app](https://github.com/ecwpz91/containers/tree/master/ocps2i/drupal/93/test/test-app) application
 using standalone [S2I](https://github.com/openshift/source-to-image) and then run the
 resulting image with [Docker](http://docker.io) execute:
 
 *  **For RHEL based image**
     ```
-    $ s2i build https://github.com/sclorg/s2i-php-container.git --context-dir=7.0/test/test-app rhscl/php-70-rhel7 php-test-app
-    $ docker run -p 8080:8080 php-test-app
+    $ s2i build git@github.com:ecwpz91/containers.git --context-dir=ocps2i/drupal/93/test/test-app  quay.io/ecwpz91/s2i-drupal-93 drupal-test-app
+    $ docker run -p 8080:8080 drupal-test-app
     ```
-
-*  **For CentOS based image**
-    ```
-    $ s2i build https://github.com/sclorg/s2i-php-container.git --context-dir=7.0/test/test-app centos/php-70-centos7 php-test-app
-    $ docker run -p 8080:8080 php-test-app
-    ```
-
+    
 **Accessing the application:**
 ```
 $ curl 127.0.0.1:8080
