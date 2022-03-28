@@ -47,37 +47,20 @@ if [ -f composer.json ]; then
     php <$TEMPFILE -- --$COMPOSER_VERSION
   fi
 
-  echo "################################"
-  echo "####   INSTALLING DRUSH    #####"
-  echo "################################"
+  echo "Installing drush"
   wget -O /usr/local/bin/robo https://github.com/consolidation/Robo/releases/download/1.0.4/robo.phar && chmod +x /usr/local/bin/robo \
   && wget -O /usr/local/bin/drush https://github.com/drush-ops/drush-launcher/releases/download/0.6.0/drush.phar && chmod +x /usr/local/bin/drush \
   && wget -q https://getcomposer.org/installer -O - | php -- --install-dir=/usr/local/bin --filename=composer
 
-  #chmod +x /usr/local/bin/composer #not working
-  echo "####   LISTING $pwd    #####"
-  ls
-
-  { # try
-    echo "################################"
-    echo "trying to install drupalconsole"
-    echo "################################"
+  {
+    echo "Installing drupalconsole"
     wget -O /opt/app-root/src/drupal https://drupalconsole.com/installer && chmod +x /opt/app-root/src/drupal && /opt/app-root/src/drupal init
-
-  } || { # catch
-    # save log for exception
-
-
+  } || 
     {
       if [  -f /composer.phar ]; then
-        echo "################################"
         echo "Installing drupalconsole using composer"
-        echo "################################"
-
         ./composer.phar require drupal/console:~1.0
         ./composer.phar update
-
-
       fi
     }
 
