@@ -2,16 +2,47 @@
 
 set -e
 
+source ${PHP_CONTAINER_SCRIPTS_PATH}/common.sh
 shopt -s dotglob
 echo "---> Installing application source..."
+rm -fR /tmp/src/.git
 mv /tmp/src/* ./
-PATH=/usr/local/bin:$PATH
 
+# Fix source directory permissions
+fix-permissions ./
+fix-permissions ${HTTPD_CONFIGURATION_PATH}
+# Change the npm registry mirror if provided
+if [ -n "$NPM_MIRROR" ]; then
+	npm config set registry $NPM_MIRROR
+fi
 if [ -f composer.json ]; then
   echo "Found 'composer.json', installing dependencies using composer.phar... "
 
   # Install Composer
-  curl https://getcomposer.org/installer | php
+  TEMPFILE=$(mktemp)
+  RETRIES=6
+  for ((i=0; i<$RETRIES; i++)); do
+
+    if [ -z "$COMPOSER_INSTALLER" ]; then
+      export COMPOSER_INSTALLER="https://getcomposer.org/installer" | php
+    fi
+
+    echo "Downloading $COMPOSER_INSTALLER, attempt $((i+1))/$RETRIES"
+    curl -o $TEMPFILE $COMPOSER_INSTALLER && break
+    sleep 10
+  done
+  if [[ $i == $RETRIES ]]; then
+    echo "Download failed, giving up."
+    exit 1
+  fi
+
+  if [ -z $COMPOSER_VERSION ]; then
+    echo "By default, latest composer will be used. If you want to use v1 please use the environment variable COMPOSER_VERSION=1"
+    php <$TEMPFILE
+  else
+    echo "You set the COMPOSER_VERSION"
+    php <$TEMPFILE -- --$COMPOSER_VERSION
+  fi
 
   echo "################################"
   echo "####   INSTALLING DRUSH    #####"
@@ -56,14 +87,11 @@ if [ -f composer.json ]; then
 
   # Change the repo mirror if provided
   if [ -n "$COMPOSER_MIRROR" ]; then
-    echo " Change the repo mirror because it is provided"
-    composer config -g repositories.packagist composer $COMPOSER_MIRROR
+    ./composer.phar config -g repositories.packagist composer $COMPOSER_MIRROR
   fi
 
-
-# Install App dependencies using Composer
-  echo "Install App dependencies using Composer"
-  ./composer.phar install --no-interaction --no-ansi --optimize-autoloader
+  # Install App dependencies using Composer
+  ./composer.phar install --no-interaction --no-ansi --optimize-autoloader $COMPOSER_ARGS
 
   if [ ! -f composer.lock ]; then
     echo -e "\nConsider adding a 'composer.lock' file into your source repository.\n"
@@ -90,5 +118,9 @@ if [ -f composer.json ]; then
   chmod 440 /opt/app-root/src/$DOCUMENTROOT/sites/default/settings.php
 fi
 
+# post-assemble files
+process_extending_files ./php-post-assemble/ ${PHP_CONTAINER_SCRIPTS_PATH}/post-assemble/
+
 # Fix source directory permissions
 fix-permissions ./
+fix-permissions ${HTTPD_CONFIGURATION_PATH}
