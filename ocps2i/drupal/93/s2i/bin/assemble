@@ -70,20 +70,16 @@ if [ -f composer.json ]; then
     echo -e "\nConsider adding a 'composer.lock' file into your source repository.\n"
   fi
 
-  echo "Make CONFIGURATION DIRECTORY: SYNC"
+  echo "Make sync configuration directory"
   mkdir -p /opt/app-root/src/$DOCUMENTROOT/sites/default/files/config_dir/sync
 
   echo "Copying settings file to drupal"
   cp /opt/app-root/etc/drupal/settings.php /opt/app-root/src/$DOCUMENTROOT/sites/default/settings.php
 
-  echo "Fix source directory permissions"
-  # envvar  DOCUMENTROOT
-  mkdir -p /opt/app-root/src/$DOCUMENTROOT/sites/default/files
-  chmod 755 -R /opt/app-root/src/$DOCUMENTROOT/sites/default/
-  chmod 777 -R /opt/app-root/src/$DOCUMENTROOT/sites/default/files
-  #chgrp -Rv 1001 sites/default/files
-  #chmod 2775 sites/default/files
-  chmod 440 /opt/app-root/src/$DOCUMENTROOT/sites/default/settings.php
+  # echo "Fix source directory permissions"
+  # chmod 755 -R /opt/app-root/src/$DOCUMENTROOT/sites/default/
+  # chmod 777 -R /opt/app-root/src/$DOCUMENTROOT/sites/default/files
+  # chmod 440 /opt/app-root/src/$DOCUMENTROOT/sites/default/settings.php
 fi
 
 # post-assemble files
