@@ -69,10 +69,10 @@ ENV PHP_CONTAINER_SCRIPTS_PATH=/usr/share/container-scripts/php/ \
 
 # Install Drupal
 RUN curl -fSL "http://ftp.drupal.org/files/projects/drupal-${DRUPAL_VERSION}.tar.gz" -o drupal.tar.gz \
-	&& echo "${DRUPAL_MD5} *drupal.tar.gz" | md5sum -c - \
+    && echo "${DRUPAL_MD5} *drupal.tar.gz" | md5sum -c - \
     && mkdir -p /opt/rh/rh-drupal93 \
-	&& tar -xz --strip-components=1 -f drupal.tar.gz -C /opt/rh/rh-drupal93 \
-	&& rm -rf drupal.tar.gz \
+    && tar -xz --strip-components=1 -f drupal.tar.gz -C /opt/rh/rh-drupal93 \
+    && rm -rf drupal.tar.gz \
     && ln -s /opt/rh/rh-drupal93/* ${HOME} \
     # Remove systemd boot targets - improves container init performance
     && (cd /lib/systemd/system/sysinit.target.wants \
