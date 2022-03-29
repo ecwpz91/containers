@@ -73,6 +73,7 @@ RUN curl -fSL "http://ftp.drupal.org/files/projects/drupal-${DRUPAL_VERSION}.tar
     && mkdir -p /opt/rh/rh-drupal93 \
 	&& tar -xz --strip-components=1 -f drupal.tar.gz -C /opt/rh/rh-drupal93 \
 	&& rm -rf drupal.tar.gz \
+    && ln -s /opt/rh/rh-drupal93/* ${HOME} \
     # Remove systemd boot targets - improves container init performance
     && (cd /lib/systemd/system/sysinit.target.wants \
     && for i in *; do [ $i = systemd-tmpfiles-setup.service ] || rm -vf $i; done) \
