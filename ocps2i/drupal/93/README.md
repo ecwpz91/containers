@@ -18,7 +18,7 @@ resulting image with [Docker](http://docker.io) execute:
 
 *  **For RHEL based image**
     ```
-    $ s2i build git@github.com:ecwpz91/containers.git --context-dir=ocps2i/drupal/93/test/test-app  quay.io/ecwpz91/s2i-drupal-93 drupal-test-app
+    $ s2i build https://github.com/ecwpz91/containers.git --context-dir=ocps2i/drupal/93/test/test-app  quay.io/ecwpz91/s2i-drupal-93 drupal-test-app
     $ docker run -p 8080:8080 drupal-test-app
     ```
 
