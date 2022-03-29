@@ -52,20 +52,6 @@ if [ -f composer.json ]; then
   && wget -O /usr/local/bin/drush https://github.com/drush-ops/drush-launcher/releases/download/0.6.0/drush.phar && chmod +x /usr/local/bin/drush \
   && wget -q https://getcomposer.org/installer -O - | php -- --install-dir=/usr/local/bin --filename=composer
 
-  {
-    echo "Installing drupalconsole"
-    wget -O /opt/app-root/src/drupal https://drupalconsole.com/installer && chmod +x /opt/app-root/src/drupal && /opt/app-root/src/drupal init
-  } || 
-    {
-      if [  -f /composer.phar ]; then
-        echo "Installing drupalconsole using composer"
-        ./composer.phar require drupal/console:~1.0
-        ./composer.phar update
-      fi
-    }
-
-  }
-
   if [ "$(ls -a /tmp/artifacts/ 2>/dev/null)" ]; then
     echo "Restoring build artifacts"
     mv /tmp/artifacts/* $HOME/
