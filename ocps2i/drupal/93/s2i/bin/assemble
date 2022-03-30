@@ -47,12 +47,6 @@ if [ -f composer.json ]; then
     php <$TEMPFILE -- --$COMPOSER_VERSION
   fi
 
-  echo "Installing robo"
-  wget -O /usr/local/bin/robo https://github.com/consolidation/Robo/releases/download/1.0.4/robo.phar && chmod +x /usr/local/bin/robo
-  
-  echo "Installing drush"
-  wget -O /usr/local/bin/drush https://github.com/drush-ops/drush/releases/download/8.1.16/drush.phar && chmod +x /usr/local/bin/drush
-
   if [ "$(ls -a /tmp/artifacts/ 2>/dev/null)" ]; then
     echo "Restoring build artifacts"
     mv /tmp/artifacts/* $HOME/
@@ -64,6 +58,7 @@ if [ -f composer.json ]; then
   fi
 
   # Install App dependencies using Composer
+  ./composer.phar require --no-interaction --no-ansi --optimize-autoloader drush/drush
   ./composer.phar install --no-interaction --no-ansi --optimize-autoloader $COMPOSER_ARGS
 
   if [ ! -f composer.lock ]; then
@@ -75,11 +70,6 @@ if [ -f composer.json ]; then
 
   echo "Copying settings file to drupal"
   cp /opt/app-root/etc/drupal/settings.php /opt/app-root/src/$DOCUMENTROOT/sites/default/settings.php
-
-  # echo "Fix source directory permissions"
-  # chmod 755 -R /opt/app-root/src/$DOCUMENTROOT/sites/default/
-  # chmod 777 -R /opt/app-root/src/$DOCUMENTROOT/sites/default/files
-  # chmod 440 /opt/app-root/src/$DOCUMENTROOT/sites/default/settings.php
 fi
 
 # post-assemble files
