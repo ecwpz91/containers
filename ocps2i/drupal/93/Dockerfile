@@ -67,13 +67,20 @@ ENV PHP_CONTAINER_SCRIPTS_PATH=/usr/share/container-scripts/php/ \
     HTTPD_DATA_ORIG_PATH=/var/www \
     HTTPD_VAR_PATH=/var
 
-# Install Drupal
+# Install Drupal and drush
 RUN curl -fSL "http://ftp.drupal.org/files/projects/drupal-${DRUPAL_VERSION}.tar.gz" -o drupal.tar.gz \
     && echo "${DRUPAL_MD5} *drupal.tar.gz" | md5sum -c - \
     && mkdir -p /opt/rh/rh-drupal93 \
     && tar -xz --strip-components=1 -f drupal.tar.gz -C /opt/rh/rh-drupal93 \
     && rm -rf drupal.tar.gz \
     && ln -s /opt/rh/rh-drupal93/* ${HOME} \
+    # && curl -fSL 'https://github.com/drush-ops/drush/archive/refs/tags/11.0.7.tar.gz' -o drush.tar.gz \
+    # && mkdir -p /opt/rh/rh-drush11 \
+    # && tar -xz --strip-components=1 -f drush.tar.gz -C /opt/rh/rh-drush11 \
+    # && rm -rf drush.tar.gz \
+    # && ln -s /opt/rh/rh-drush11/drush /usr/bin/drush \
+    && wget -O /usr/local/bin/drush https://github.com/drush-ops/drush-launcher/releases/download/0.10.1/drush.phar \
+    && chmod +x /usr/local/bin/drush \
     # Remove systemd boot targets - improves container init performance
     && (cd /lib/systemd/system/sysinit.target.wants \
     && for i in *; do [ $i = systemd-tmpfiles-setup.service ] || rm -vf $i; done) \
@@ -92,7 +99,8 @@ COPY ./s2i/bin/ $STI_SCRIPTS_PATH
 COPY ./root/ /
 
 # Reset permissions of filesystem to default values
-RUN /usr/libexec/container-setup && rpm-file-permissions
+RUN /usr/libexec/container-setup && rpm-file-permissions \
+    && chown -R 1001:0 /opt/rh/rh-drupal93 && chmod -R ug+rwx /opt/rh/rh-drupal93
 
 USER 1001
 
