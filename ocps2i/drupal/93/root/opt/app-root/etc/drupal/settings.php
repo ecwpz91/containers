@@ -759,8 +759,11 @@ $settings['file_scan_ignore_directories'] = [
  * other things that should not happen on development and testing sites.
  *
  * Keep this code block at the end of this file to take full effect.
+ * 
+ * https://modulesunraveled.com/drupal-8-composer-and-configuration-management/configuring-settingsphp-and-settingslocalphp
+ * 
  */
-#
+
 # if (file_exists($app_root . '/' . $site_path . '/settings.local.php')) {
 #   include $app_root . '/' . $site_path . '/settings.local.php';
 # }
@@ -784,7 +787,6 @@ if (getenv("MEMORY_LIMIT") !== false){
     ini_set('memory_limit',getenv('MEMORY_LIMIT'));
 }
 
-
-
 $settings['install_profile'] = 'social';
+
 $config_directories['sync'] = 'sites/default/files/config_dir/sync';
