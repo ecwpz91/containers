@@ -58,7 +58,6 @@ if [ -f composer.json ]; then
   fi
 
   # Install App dependencies using Composer
-  ./composer.phar require --no-interaction --no-ansi --optimize-autoloader drush/drush
   ./composer.phar install --no-interaction --no-ansi --optimize-autoloader $COMPOSER_ARGS
 
   if [ ! -f composer.lock ]; then
